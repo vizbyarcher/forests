@@ -1,0 +1,14 @@
+{
+  "name": "New folder (5)",
+  "version": "1.1.0",
+  "description": "",
+  "attribution": "Rendered with <a href=\"https://www.maptiler.com/desktop/\">MapTiler Desktop</a>",
+  "type": "baselayer",
+  "color": "#FFFFFF",
+  "format": "png",
+  "minzoom": "6",
+  "maxzoom": "12",
+  "scale": "1.000000",
+  "bounds": [20.26356442, 43.61933596, 29.71679420, 48.26560155],
+  "profile": "mercator"
+}
