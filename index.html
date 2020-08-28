@@ -20,14 +20,14 @@
   <div id="map"></div>
   <script type="text/javascript">
     var mapExtent = [19.32120412060868, 42.67723088757718, 30.650064477337224, 49.20946062792045];
-    var mapMinZoom = 7;
+    var mapMinZoom = 6;
     var mapMaxZoom = 12;
     var bounds = new L.LatLngBounds(
       new L.LatLng(mapExtent[1], mapExtent[0]),
       new L.LatLng(mapExtent[3], mapExtent[2]));
     var map = L.map('map').fitBounds(bounds);
 	map.setMaxBounds(bounds);
-	map.setZoom(7);
+	map.setZoom(6);
     var layer;
     var options = {
 	  minZoom: mapMinZoom,
