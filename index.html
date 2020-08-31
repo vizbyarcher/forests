@@ -45,7 +45,9 @@
     zoomOffset: -1,
   }).fitBounds(bounds);
   map.setMaxBounds(bounds);
-  L.esri.basemapLayer('Imagery').addTo(map);
+  L.esri.basemapLayer('Imagery', {
+    detectRetina: true
+  }).addTo(map);
   map.setZoom(6);
   map.locate({setView: true, maxZoom: 12});
   var layer;
