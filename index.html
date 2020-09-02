@@ -19,7 +19,7 @@
     integrity="sha512-ucw7Grpc+iEQZa711gcjgMBnmd9qju1CICsRaryvX7HJklK0pGl/prxKvtHwpgm5ZHdvAil7YPxI1oWPOWK3UQ=="
     crossorigin=""></script>
   <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
-  <script src="http://lab.digital-democracy.org/leaflet-bing-layer/leaflet-bing-layer.js"></script>
+  
 
   <script src="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.js"></script>
   <link rel="stylesheet" href="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.css">
@@ -56,21 +56,11 @@
     loadingControl: true,
   }).fitBounds(bounds);
   map.setMaxBounds(bounds);
-  L.tileLayer.bing('AsacexlUSIaAozHYdASwSvAyjc3TjUQngoJQccLrxa9GDArg4Ye73ebsTWfX8RKU').addTo(map);
+  L.esri.basemapLayer('Imagery', {
+    detectRetina: true
+  }).addTo(map);
   map.setZoom(6);
   map.locate({setView: true, maxZoom: 12});
-  var layer;
-  var options = {
-  minZoom: mapMinZoom,
-  maxZoom: mapMaxZoom,
-  zoomDelta: 0.25,
-  zoomSnap: 0.25,
-  opacity: 1.0,
-  attribution: '©2020 Google',
-  tms: false,
-  };
-  // layer = L.tileLayer.fallback('{z}/{x}/{y}.png', options).addTo(map);
-  // layer = L.tileLayer('{z}/{x}/{y}.png', options).addTo(map);
 
   var layer1;
   var options1 = {
