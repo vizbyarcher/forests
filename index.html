@@ -86,11 +86,14 @@
         new L.LatLng(mapExtent[1], mapExtent[0]),
         new L.LatLng(mapExtent[3], mapExtent[2]));
     
+    // https://gitlab.com/IvanSanchez/Leaflet.GridLayer.GoogleMutant
+    // https://github.com/MazeMap/Leaflet.TileLayer.PouchDBCached
     var googleMap = L.gridLayer.googleMutant({
         maxZoom: 21,
         type:'satellite',
         useCache: true,
 	    crossOrigin: true,
+        detectRetina: true,
         });
 
     var map = L.map('map', {
@@ -103,16 +106,18 @@
         // loadingControl: true,
         fadeAnimation: false,
         // layers:[copernicusMap],
+        detectRetina: true,
         });
     
+    // https://leafletjs.com/examples/map-panes/
     map.createPane('overlay');
     map.getPane('overlay').style.zIndex = 650;
     map.getPane('overlay').style.pointerEvents = 'none';
-
     map.createPane('labels');
     map.getPane('labels').style.zIndex = 651;
     map.getPane('labels').style.pointerEvents = 'none';
     
+    // https://leafletjs.com/reference-1.7.1.html#tilelayer
     var options1 = {
         minZoom: 6,
         maxZoom: 17,
@@ -122,51 +127,49 @@
         attribution: '',
         tms: false,
         pane: 'overlay',
+        detectRetina: true,       
         };
+    // https://github.com/ghybs/Leaflet.TileLayer.Fallback
     var overlay1 = L.tileLayer.fallback('data/{z}/{x}/{y}.png', options1)
     overlay1.addTo(map);
     
+    // https://esri.github.io/esri-leaflet/examples/basemap-with-labels.html
+    // https://leafletjs.com/examples/map-panes/
     var esriLabels = L.esri.basemapLayer('ImageryLabels', {
         pane: 'labels',
         minZoom: 8,
         maxZoom: 17,
+        useCache: true,
+	    crossOrigin: true,
+        detectRetina: true,
         }).addTo(map);
     
+    // https://leafletjs.com/examples/layers-control/
     var overlays = {
         "Paduri": overlay1,
         "Denumiri": esriLabels,
     };
 
-    getIdfromUrl();
-    var webMap = L.esri.webMap('bf34c8bd6f114b72940f8a124a614645', {map: map});
-
+    // https://esri.github.io/esri-leaflet/examples/webmap.html?id=d143b33f1a02421d86b6a4ca1d7b7cd0
+    // http://zevross.com/blog/2014/04/25/adding-arcgis-map-services-to-your-map-using-leaflet/
+    var webMap = L.esri.webMap('bf34c8bd6f114b72940f8a124a614645', {map: map, useCache: true, crossOrigin: true, detectRetina: true, });
     webMap.on('load', function () {
-    var baseMaps = {'2018-2019': googleMap};
-    window.overlayMaps = {};
-
-    webMap.layers.map(function (l) {
-        window.overlayMaps[l.title] = l.layer;
-        });
-        // L.control.layers(baseMaps, overlayMaps, {
-        // position: 'bottomleft',
-        // collapsed: true,
-        //}).addTo(webMap._map);
+        // var baseMaps = {'2018-2019': googleMap};
+        window.overlayMaps = {};
+        webMap.layers.map(function (l) {
+            window.overlayMaps[l.title] = l.layer;
+            });
+            // L.control.layers(baseMaps, overlayMaps, {
+            // position: 'bottomleft',
+            // collapsed: true,
+            //}).addTo(webMap._map);
     });
-
-    function getIdfromUrl () {
-        var urlParams = location.search.substring(1).split('&');
-        for (var i = 0; urlParams[i]; i++) {
-        var param = urlParams[i].split('=');
-        if (param[0] === 'id') {
-            webmapId = param[1];
-        }
-        }
-    };
 
     map.fitBounds(bounds);
     map.setMaxBounds(bounds);
     map.setZoom(6);
 
+    // https://leafletjs.com/examples/layers-control/
     L.control.layers({}, overlays, {
         position: 'bottomleft',
         collapsed: true,
@@ -175,22 +178,29 @@
     var layer = googleMap.addTo(map);
     // googleMap.setZIndex(649);
 
-    var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
-
+    // https://esri.github.io/esri-leaflet/examples/search-map-service.html
+    // https://esri.github.io/esri-leaflet/examples/search-feature-layer-search-mode.html
+    // https://esri.github.io/esri-leaflet/api-reference/controls/geosearch.html
+    // https://developers.arcgis.com/rest/geocode/api-reference/geocoding-category-filtering.htm#ESRI_SECTION1_502B3FE2028145D7B189C25B1A00E17B
+    // https://developers.arcgis.com/rest/geocode/api-reference/geocode-coverage.htm
+    var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider({maxResults: 10, countries: ['ROU', 'RO'],}); 
     L.esri.Geocoding.geosearch({
         providers: [
-        arcgisOnline,
-        L.esri.Geocoding.mapServiceProvider({
-            label: 'Caută',
-            url: 'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',
-            layers: [1, 2, 3],
-            searchFields: ['NAME']
-        })
+            arcgisOnline,
+            L.esri.Geocoding.mapServiceProvider({
+                label: 'Caută',
+                url: 'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',
+                layers: [1, 2, 3],
+                // searchFields: ['NAME'],  
+            })
         ]
     }).addTo(map);
 
+    // https://leafletjs.com/examples/mobile/
     map.locate({setView: true, maxZoom: 12});
 
+    // https://esri.github.io/esri-leaflet/
+    // https://esri.github.io/esri-leaflet/examples/switching-basemaps.html
     document
         .querySelector('#basemaps')
         .addEventListener('change', function (e) {
