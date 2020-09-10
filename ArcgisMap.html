@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Displaying Web maps</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+  <!-- Load Leaflet from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+    crossorigin=""></script>
+
+  <!-- Load Esri Leaflet from CDN -->
+  <script src="https://unpkg.com/esri-leaflet@2.5.0/dist/esri-leaflet.js"
+    integrity="sha512-ucw7Grpc+iEQZa711gcjgMBnmd9qju1CICsRaryvX7HJklK0pGl/prxKvtHwpgm5ZHdvAil7YPxI1oWPOWK3UQ=="
+    crossorigin=""></script>
+
+  <style>
+    body { margin:0; padding:0; }
+    #map { position: absolute; top:0; bottom:0; right:0; left:0; }
+  </style>
+</head>
+<body>
+
+<!-- Load Leaflet Label from GitHub -->
+<script src="https://leaflet.github.io/Leaflet.label/leaflet.label.js"></script>
+
+<!-- Include Leaflet.heat from CDN -->
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+<!-- Load Heatmap Feature Layer from CDN -->
+<script src="https://cdn.jsdelivr.net/leaflet.esri.heatmap-feature-layer/2.0.0-beta.1/esri-leaflet-heatmap-feature-layer.js"></script>
+
+ <!-- Load Esri Leaflet Renderers from CDN -->
+ <script src="https://cdn.jsdelivr.net/leaflet.esri.renderers/2.0.2/esri-leaflet-renderers.js"></script>
+
+ <!-- Load Vector Icon from GitHub -->
+ <script src="https://muxlab.github.io/Leaflet.VectorIcon/L.VectorIcon.js"></script>
+
+ <!-- Load Leaflet Omnivore -->
+ <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+
+ <!-- Load L.esri.WebMap -->
+ <script src="https://cdn.jsdelivr.net/leaflet.esri.webmap/0.4.0/esri-leaflet-webmap.js"></script>
+
+ <script src="https://maps.googleapis.com/maps/api/js" async defer></script>
+    <script src="https://unpkg.com/es6-promise@4.0.5/dist/es6-promise.min.js"></script>
+    <script>ES6Promise.polyfill();</script>
+    <script src='https://unpkg.com/leaflet.gridlayer.googlemutant@latest/Leaflet.GoogleMutant.js'></script>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
+
+<script src="https://unpkg.com/esri-leaflet@2.5.0/dist/esri-leaflet.js"
+integrity="sha512-ucw7Grpc+iEQZa711gcjgMBnmd9qju1CICsRaryvX7HJklK0pGl/prxKvtHwpgm5ZHdvAil7YPxI1oWPOWK3UQ=="
+crossorigin=""></script>
+
+<script src="src/inputGeojson.js" type="text/javascript"></script>
+
+<style>
+    .label {
+      font-weight: 700;
+      color: #ffffff;
+      text-transform: uppercase;
+      text-align: center;
+      margin-top: -1em;
+    }
+  
+    .label div {
+      position: relative;
+      left: -50%;
+      top: 10px;
+      text-shadow: 0px 0px 2px rgba(0,0,0,0.8);
+    }
+  </style>
+
+<div id="map"></div>
+
+<script>
+  // to draw a different webmap, just append its id instead
+  // webmap.html?id=d143b33f1a02421d86b6a4ca1d7b7cd0
+
+  var mapExtent = [19.32120412060868, 42.67723088757718, 30.650064477337224, 49.20946062792045];
+    var bounds = new L.LatLngBounds(
+        new L.LatLng(mapExtent[1], mapExtent[0]),
+        new L.LatLng(mapExtent[3], mapExtent[2]));
+    
+    // https://gitlab.com/IvanSanchez/Leaflet.GridLayer.GoogleMutant
+    // https://github.com/MazeMap/Leaflet.TileLayer.PouchDBCached
+    var googleMap = L.gridLayer.googleMutant({
+        maxZoom: 21,
+        type:'satellite',
+        useCache: true,
+	    crossOrigin: true,
+        detectRetina: true,
+        });
+
+    var map = L.map('map', {
+        minZoom: 6,
+        maxZoom: 17,
+        // zoomDelta: 0.5,
+        // zoomSnap: 0.5,
+        tileSize: 256,
+        // zoomOffset: -1,
+        // loadingControl: true,
+        fadeAnimation: false,
+        // layers:[copernicusMap],
+        detectRetina: true,
+        });
+    
+    map.fitBounds(bounds);
+    map.setMaxBounds(bounds);
+    map.setZoom(6);
+
+    var layer = googleMap.addTo(map);
+
+    // https://esri.github.io/esri-leaflet/download/
+    // https://esri.github.io/esri-leaflet/examples/styling-feature-layer-points.html
+    var icon1 = L.divIcon({
+            iconSize: null,
+        });
+    var featureLayer1 = L.esri.featureLayer({
+        url: 'https://services6.arcgis.com/qLrFejzrSqk9Eg0t/arcgis/rest/services/RomaniaUAT/FeatureServer/0',
+        minZoom: 10,
+        maxZoom: 14,
+        pointToLayer: function (geojson, latlng) {
+            return L.marker(latlng, {
+                icon: icon1,
+            });
+        }
+    }).addTo(map);
+
+   
+    // https://esri.github.io/esri-leaflet/examples/labeling-features.html
+    var labels = {};
+    featureLayer1.on('createfeature', function (e) {
+        // console.log('create feature!!!');
+        var id = e.feature.id;
+        var feature = featureLayer1.getFeature(id);
+        var center = feature.getLatLng();
+        var label = L.marker(center, {
+            icon: L.divIcon({
+                iconSize: null,
+                className: 'label',
+                html: '<div>' + e.feature.properties.name + '</div>'
+            })
+        }).addTo(map);
+        labels[id] = label;
+    });
+
+    featureLayer1.on('addfeature', function (e) {
+        // console.log('add feature!!!');
+        var label = labels[e.feature.id];
+        if (label) {
+            label.addTo(map);
+        }
+    });
+    
+    featureLayer1.on('removefeature', function (e) {
+        // console.log('remove feature!!!');
+        var label = labels[e.feature.id];
+        if (label) {
+            map.removeLayer(label);
+        }
+    });
+
+    // https://stackoverflow.com/questions/49144542/how-to-detect-if-leaflet-map-is-zoomed-in-or-zoomed-out
+    var prevZoom = map.getZoom();
+    // alert(prevZoom);
+    var currZoom = map.getZoom();
+    map.on('zoomend',function(e){
+        window.currZoom = map.getZoom();
+        // console.log('Current zoom is:' + window.currZoom + ', Previous zoom is:' + prevZoom);
+        if ((window.currZoom == 10 && prevZoom == 9)) {
+            for (const key in labels) {
+                labels[key].addTo(map);
+            }
+        }
+        prevZoom = window.currZoom;
+    }
+    );
+
+    // map.on('zoomend',function(e){// var currZoom = map.getZoom();// alert(currZoom);var size = Object.keys(labels).length;console.log(size);});
+    
+    
+    
+
+       
+
+    
+
+
+
+
+
+</script>
+
+</body>
+</html>
+
