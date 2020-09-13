@@ -108,29 +108,34 @@
     var bounds = new L.LatLngBounds(
         new L.LatLng(mapExtent[1], mapExtent[0]),
         new L.LatLng(mapExtent[3], mapExtent[2]));
-    
-    // https://gitlab.com/IvanSanchez/Leaflet.GridLayer.GoogleMutant
-    // https://github.com/MazeMap/Leaflet.TileLayer.PouchDBCached
-    var googleMap = L.gridLayer.googleMutant({
-        maxZoom: 21,
-        type:'satellite',
-        useCache: true,
-	    crossOrigin: true,
-        detectRetina: true,
-        });
 
     var map = L.map('map', {
         minZoom: 6,
         maxZoom: 17,
         // zoomDelta: 0.5,
         // zoomSnap: 0.5,
-        tileSize: 256,
+        // tileSize: 512,
         // zoomOffset: -1,
         // loadingControl: true,
-        fadeAnimation: false,
+        fadeAnimation: true,
         // layers:[copernicusMap],
         detectRetina: true,
         });
+    
+    // https://gitlab.com/IvanSanchez/Leaflet.GridLayer.GoogleMutant
+    // https://github.com/MazeMap/Leaflet.TileLayer.PouchDBCached
+    var googleMap = L.gridLayer.googleMutant({
+        minZoom: 6,
+        maxZoom: 21,
+        type:'satellite',
+        useCache: true,
+        cacheMaxAge: 1000 * 60 * 60 * 24 * 30,	// 30 days
+	    crossOrigin: true,
+        detectRetina: true,
+        });
+    var layer = googleMap.addTo(map);
+    // googleMap.setZIndex(649);
+    var baseId = layer._leaflet_id;
     
     // https://leafletjs.com/examples/map-panes/
     map.createPane('overlay');
@@ -163,6 +168,7 @@
         minZoom: 12,
         maxZoom: 17,
         useCache: true,
+        cacheMaxAge: 1000 * 60 * 60 * 24 * 30,	// 30 days
 	    crossOrigin: true,
         detectRetina: true,
         }).addTo(map);
@@ -175,18 +181,30 @@
 
     // https://esri.github.io/esri-leaflet/examples/webmap.html?id=d143b33f1a02421d86b6a4ca1d7b7cd0
     // http://zevross.com/blog/2014/04/25/adding-arcgis-map-services-to-your-map-using-leaflet/
-    var webMap = L.esri.webMap('bf34c8bd6f114b72940f8a124a614645', {map: map, useCache: true, crossOrigin: true, detectRetina: true, });
+    var webMap = L.esri.webMap('bf34c8bd6f114b72940f8a124a614645', {
+        map: map, 
+        useCache: true, 
+        crossOrigin: true, 
+        detectRetina: true, 
+        });
     webMap.on('load', function () {
         // var baseMaps = {'2018-2019': googleMap};
         window.overlayMaps = {};
         webMap.layers.map(function (l) {
             window.overlayMaps[l.title] = l.layer;
+            l.layer.addTo(map);
+            l.layer.bringToBack();
             });
             // L.control.layers(baseMaps, overlayMaps, {
             // position: 'bottomleft',
             // collapsed: true,
             //}).addTo(webMap._map);
     });
+    
+    map.on('zoomend',function(e){
+        // map.eachLayer(function(layer){console.log(layer);});
+    });  
+
 
     map.fitBounds(bounds);
     map.setMaxBounds(bounds);
@@ -196,10 +214,13 @@
     L.control.layers({}, overlays, {
         position: 'bottomleft',
         collapsed: true,
-        }).addTo(webMap._map);
+        }).addTo(map);
 
-    var layer = googleMap.addTo(map);
-    // googleMap.setZIndex(649);
+    
+
+    // map.eachLayer(function(layer){console.log(layer);});
+    // map.eachLayer(function(layer){console.log(layer._leaflet_id);});
+
 
     // https://esri.github.io/esri-leaflet/examples/search-map-service.html
     // https://esri.github.io/esri-leaflet/examples/search-feature-layer-search-mode.html
@@ -229,18 +250,19 @@
         .addEventListener('change', function (e) {
             var basemap = e.target.value;
             // console.log(basemap);
-            if (layer) {
-                map.removeLayer(layer);
-                }
+            // map.eachLayer(function(layer){console.log(layer._leaflet_id);});
+
             if (basemap === '2018-2019') {
-                // console.log('Google Maps selected!');
-                map.removeLayer(layer);
-                map.invalidateSize();
-                googleMap.addTo(map);
+                googleMap.setOpacity(1);
+                googleMap.bringToFront();
             } else {
+                googleMap.setOpacity(0);
                 layer = window.overlayMaps[basemap];
-                map.addLayer(layer);
+                // map.addLayer(layer);
+                layer.bringToFront();  
             }
+            // map.eachLayer(function(layer){console.log(layer._leaflet_id);});
+            // map.eachLayer(function(layer){console.log(layer);});
             });
     
     // ARCGIS.ONLINE PUBLIC FEATURE LAYER FROM GEOJSON FILE
@@ -314,12 +336,14 @@
     
     // https://leafletjs.com/examples/geojson/
     var geojsonMarkerOptions = {
-        radius: 8,
+        radius: 80,
         fillColor: "#ff7800",
         color: "#000",
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.1
+        weight: 0,
+        opacity: 0,
+        fillOpacity: 0,
+        stroke: false,
+        fill: false,
     };
 
     function onEachFeature(feature, layer) {
