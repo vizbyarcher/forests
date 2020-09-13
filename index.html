@@ -128,7 +128,7 @@
     // https://github.com/MazeMap/Leaflet.TileLayer.PouchDBCached
     var googleMap = L.gridLayer.googleMutant({
         minZoom: 6,
-        maxZoom: 21,
+        maxZoom: 17,
         type:'satellite',
         useCache: true,
         cacheMaxAge: 1000 * 60 * 60 * 24 * 30,	// 30 days
@@ -151,6 +151,7 @@
     var options1 = {
         minZoom: 6,
         maxZoom: 17,
+        maxNativeZoom: 12,
         // zoomDelta: 0.5,
         // zoomSnap: 0.5,
         opacity: 1.0,
@@ -255,12 +256,15 @@
             // map.eachLayer(function(layer){console.log(layer._leaflet_id);});
 
             if (basemap === '2018-2019') {
+                layer.setOpacity(0);
                 googleMap.setOpacity(1);
                 googleMap.bringToFront();
+                layer = googleMap;
             } else {
                 googleMap.setOpacity(0);
+                layer.setOpacity(0);
                 layer = window.overlayMaps[basemap];
-                // map.addLayer(layer);
+                layer.setOpacity(1);
                 layer.bringToFront();  
             }
             // map.eachLayer(function(layer){console.log(layer._leaflet_id);});

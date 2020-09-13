@@ -190,25 +190,25 @@
         .addEventListener('change', function (e) {
             var basemap = e.target.value;
 
-            if ((layer) && (layer._leaflet_id !== baseId)) {
-                console.log('Deleting layer: ' + layer._leaflet_id);
-                // map.removeLayer(layer);
-                }
 
             if (basemap === '2018-2019') {
                 console.log('Google Maps selected!');
                 // map.removeLayer(layer);
                 
                 // googleMap.addTo(webMap._map);
-                // layer = googleMap;
+                
                 // map.addLayer(googleMap);
+                layer.setOpacity(0);
                 googleMap.setOpacity(1);
                 googleMap.bringToFront();
+                layer = googleMap;
                 
             } else {
                 googleMap.setOpacity(0);
+                layer.setOpacity(0);
                 layer = window.overlayMaps[basemap];
                 // map.addLayer(layer);
+                layer.setOpacity(1);
                 layer.bringToFront();
             }
             map.eachLayer(function(layer){console.log(layer._leaflet_id);});
