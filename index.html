@@ -388,10 +388,14 @@
     // method that we will use to update the control based on feature properties passed
     info.update = function (props) {
         this._div.innerHTML = '' +  (props ?
-            '<b>' + props.DENLOC_UTF8 + '</b><br /> Județul: ' + props.JUD_STR + '<br />'+ 'SIRUTA: ' + props.SIRUTA_NUM + '<br />'
-            : 'Selectați UAT');
+            '<b>' + props.DENLOC_UTF8 + '</b>'
+            : ''); // alt text if layer not active
     };
     info.addTo(map);
+
+    uat.bindPopup(function (layer) {
+        return L.Util.template('<p><strong>{DENLOC_UTF8}</strong> <br />Județul: {JUD_STR}<br />SIRUTA: {SIRUTA_NUM}</p>', layer.feature.properties);
+    });
 
     
     // https://leafletjs.com/examples/layers-control/
