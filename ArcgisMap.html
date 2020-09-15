@@ -49,7 +49,7 @@
     <script src="https://unpkg.com/pouchdb@^5.2.0/dist/pouchdb.js"></script>
     <script src="https://unpkg.com/leaflet.tilelayer.pouchdbcached@latest/L.TileLayer.PouchDBCached.js"></script>
     
-    
+    <script src="src/inputGeojson.js"></script>
 
     <style>
     body { margin:0; padding:0; }
@@ -228,16 +228,82 @@
         console.log(googleMap);
     });        
     
+    
+    
+    // https://leafletjs.com/examples/choropleth/
+    function style(feature) {
+        return {
+            fillColor: feature.properties.color,
+            weight: 1,
+            opacity: 1,
+            color: 'white',
+            // dashArray: '3',
+            fillOpacity: 0.7
+        };
+    }
+    function highlightFeature(e) {
+        var layer = e.target;
+
+        layer.setStyle({
+            weight: 5,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7
+        });
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+        };
+        info.update(layer.feature.properties);
+    }
+    function resetHighlight(e) {
+        // var layer = e.target;
+        uat.resetStyle(e.target);
+        info.update();
+    }
+    function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+    }
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            // click: zoomToFeature,
+        });
+    }
+    uat = L.geoJSON(inputGeojson, {
+        minZoom: 6,
+        maxZoom: 14,
+        style: style,
+        onEachFeature: onEachFeature,
+    });
+    var info = L.control();
+    info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    };
+    // method that we will use to update the control based on feature properties passed
+    info.update = function (props) {
+        this._div.innerHTML = '' +  (props ?
+            '<b>' + props.DENLOC_UTF8 + '</b>'
+            : ''); // alt text if layer not active
+    };
+    info.addTo(map);
+
+    uat.bindPopup(function (layer) {
+        return L.Util.template('<p><strong>{DENLOC_UTF8}</strong> <br />Județul: {JUD_STR}<br />SIRUTA: {SIRUTA_NUM}</p>', layer.feature.properties);
+    });
+    
     L.control.layers({
         'Defrișări pe ani': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_year_new/{z}/{x}/{y}.png', {opacity: 0.5, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}).addTo(map),
         'Defrișări cumulate 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss/{z}/{x}/{y}.png', {opacity: 0.5, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
         'Păduri în 2000': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.4/tree/{z}/{x}/{y}.png', {opacity: 0.3, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
         'Împăduriri/Defrișări 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_tree_gain/{z}/{x}/{y}.png', {opacity: 0.5, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,})
     }, 
-    {},
-    {position: 'bottomright',},
+    {'UAT-uri': uat,},
+    {position: 'bottomleft',},
     ).addTo(map);
-    
+
 
 </script>
 
