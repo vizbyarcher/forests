@@ -134,7 +134,9 @@
         });
     
 
-    
+    map.createPane('overlay');
+    map.getPane('overlay').style.zIndex = 650;
+    map.getPane('overlay').style.pointerEvents = 'none';
 
 
     
@@ -226,6 +228,15 @@
         console.log(googleMap);
     });        
     
+    L.control.layers({
+        'Defrișări pe ani': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_year_new/{z}/{x}/{y}.png', {opacity: 0.5, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}).addTo(map),
+        'Defrișări cumulate 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss/{z}/{x}/{y}.png', {opacity: 0.5, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
+        'Păduri în 2000': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.4/tree/{z}/{x}/{y}.png', {opacity: 0.3, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
+        'Împăduriri/Defrișări 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_tree_gain/{z}/{x}/{y}.png', {opacity: 0.5, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,})
+    }, 
+    {},
+    {position: 'bottomright',},
+    ).addTo(map);
     
 
 </script>

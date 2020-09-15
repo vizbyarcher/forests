@@ -49,7 +49,8 @@
     <script src="https://unpkg.com/pouchdb@^5.2.0/dist/pouchdb.js"></script>
     <script src="https://unpkg.com/leaflet.tilelayer.pouchdbcached@latest/L.TileLayer.PouchDBCached.js"></script>
     
-    
+    <script src="src/L.Control.MapCenterCoord.css"></script>
+    <script src="src/L.Control.MapCenterCoord.js"></script>
 
     <style>
     body { margin:0; padding:0; }
@@ -177,7 +178,7 @@
         };
     // https://github.com/ghybs/Leaflet.TileLayer.Fallback
     var overlay1 = L.tileLayer.fallback('data/{z}/{x}/{y}.png', options1)
-    overlay1.addTo(map);
+    // overlay1.addTo(map);
     
     // https://esri.github.io/esri-leaflet/examples/basemap-with-labels.html
     // https://leafletjs.com/examples/map-panes/
@@ -401,14 +402,30 @@
     // https://leafletjs.com/examples/layers-control/
     var overlays = {
         "UAT": uat,
-        "Paduri": overlay1,
+        // "Paduri": overlay1,
         "Denumiri": esriLabels,
     };
     // https://leafletjs.com/examples/layers-control/
-    L.control.layers({}, overlays, {
-        position: 'bottomleft',
+    // https://gist.github.com/wboykinm/8108799
+    L.control.layers({
+        'Defrișări pe ani': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_year_new/{z}/{x}/{y}.png', {opacity: 0.5, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}).addTo(map),
+        'Defrișări cumulate 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss/{z}/{x}/{y}.png', {opacity: 0.5, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
+        'Păduri în 2000': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.4/tree/{z}/{x}/{y}.png', {opacity: 0.3, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
+        'Împăduriri/Defrișări 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_tree_gain/{z}/{x}/{y}.png', {opacity: 0.5, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,})
+        }, 
+        overlays, 
+        {position: 'bottomleft',
         collapsed: true,
-        }).addTo(map);
+        }
+        ).addTo(map);
+    
+    L.control.mapCenterCoord(
+        {
+        position: 'bottomright',
+        icon: false,
+        latlngDesignators: true,
+        }
+    ).addTo(map);
 
 </script>
 
