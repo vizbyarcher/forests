@@ -8,17 +8,16 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <!-- Load Leaflet from CDN -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-    
-    crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-    
-    crossorigin=""></script>
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
 
     <script src="https://maps.googleapis.com/maps/api/js" async defer></script>
     <script src="https://unpkg.com/es6-promise@4.0.5/dist/es6-promise.min.js"></script>
     <script>ES6Promise.polyfill();</script>
     <script src='https://unpkg.com/leaflet.gridlayer.googlemutant@latest/Leaflet.GoogleMutant.js'></script>
-    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
 
     <script src="https://unpkg.com/esri-leaflet@2.5.0/dist/esri-leaflet.js"
     integrity="sha512-ucw7Grpc+iEQZa711gcjgMBnmd9qju1CICsRaryvX7HJklK0pGl/prxKvtHwpgm5ZHdvAil7YPxI1oWPOWK3UQ=="
@@ -35,14 +34,14 @@
     integrity="sha512-HrFUyCEtIpxZloTgEKKMq4RFYhxjJkCiF5sDxuAokklOeZ68U2NPfh4MFtyIVWlsKtVbK5GD2/JzFyAfvT5ejA=="
     crossorigin=""></script>
 
-
+    <script src="src/inputGeojson.js"></script>
     
   
 
     <!-- <script src="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.js"></script> -->
     <!-- <link rel="stylesheet" href="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.css"> -->
 
-    <script src="src/leaflet.tilelayer.fallback.js"></script>
+    <!-- <script src="src/leaflet.tilelayer.fallback.js"></script> -->
 
     <script src='https://unpkg.com/leaflet.gridlayer.fadeout@0.1.0/Leaflet.GridLayer.FadeOut.js'></script>
 
@@ -170,24 +169,7 @@
     map.createPane('labels');
     map.getPane('labels').style.zIndex = 651;
     map.getPane('labels').style.pointerEvents = 'none';
-    
-    // https://leafletjs.com/reference-1.7.1.html#tilelayer
-    var options1 = {
-        minZoom: 6,
-        maxZoom: 17,
-        maxNativeZoom: 12,
-        // zoomDelta: 0.5,
-        // zoomSnap: 0.5,
-        opacity: 1.0,
-        attribution: '',
-        tms: false,
-        pane: 'overlay',
 
-        detectRetina: true,       
-        };
-    // https://github.com/ghybs/Leaflet.TileLayer.Fallback
-    var overlay1 = L.tileLayer.fallback('data/{z}/{x}/{y}.png', options1)
-    // overlay1.addTo(map);
     
     // https://esri.github.io/esri-leaflet/examples/basemap-with-labels.html
     // https://leafletjs.com/examples/map-panes/
@@ -379,12 +361,9 @@
         });
     }
     // https://leafletjs.com/examples/choropleth/
-    uat = L.esri.featureLayer({
-        url: 'https://services6.arcgis.com/qLrFejzrSqk9Eg0t/arcgis/rest/services/UAT/FeatureServer/0/', 
+    uat = L.geoJSON(inputGeojson, {
         minZoom: 6,
         maxZoom: 14,
-        // simplifyFactor: 0.1,
-        renderer: L.canvas(),
         style: style,
         onEachFeature: onEachFeature,
     });
@@ -411,7 +390,6 @@
     // https://leafletjs.com/examples/layers-control/
     var overlays = {
         "UAT": uat,
-        // "Paduri": overlay1,
         "Denumiri": esriLabels,
     };
     // https://leafletjs.com/examples/layers-control/
