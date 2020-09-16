@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <!-- Load Leaflet from CDN -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
     
     crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
@@ -49,12 +49,19 @@
     <script src="https://unpkg.com/pouchdb@^5.2.0/dist/pouchdb.js"></script>
     <script src="https://unpkg.com/leaflet.tilelayer.pouchdbcached@latest/L.TileLayer.PouchDBCached.js"></script>
     
-    <script src="src/inputGeojson.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="src/leaflet-sidebar.css" />
+
+
+
 
     <style>
     body { margin:0; padding:0; }
     html, body, #map {height: 100%; width: 100vw;}
     #map { position: absolute; top:0; bottom:0; right:0; left:0; }
+
+    
+    
     </style>
 </head>
 
@@ -88,20 +95,104 @@
         text-shadow: 0px 0px 2px rgba(0,0,0,0.8);
         }
 
+        .legend {
+            line-height: 18px;
+            color: #555;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+            border-radius: 4px;
+            font-size: small;
+        }
+
+        .lorem {
+            font-style: italic;
+            text-align: justify;
+            color: #AAA;
+        }
+
+        
+
     </style>
     
+    <!-- optionally define the sidebar content via HTML markup -->
+    
+
     <div id="map"></div>
     
     <div id="basemaps-wrapper" class="leaflet-bar">
-    <select id="basemaps">
-        <option value="2007-2011">2007-2011</option>
-        <option value="2011-2013">2011-2013</option>
-        <option value="2013-2015">2013-2015</option>
-        <option value="2015-2017">2015-2017</option>
-        <option value="2017-2019">2017-2019</option>
-        <option value="2018-2019" selected>2018-2019</option>
-    </select>
+        <select id="basemaps">
+            <option value="2007-2011">2007-2011</option>
+            <option value="2011-2013">2011-2013</option>
+            <option value="2013-2015">2013-2015</option>
+            <option value="2015-2017">2015-2017</option>
+            <option value="2017-2019">2017-2019</option>
+            <option value="2018-2019" selected>2018-2019</option>
+        </select>
     </div>
+
+    <div id="sidebar" class="leaflet-sidebar collapsed">
+
+        <!-- nav tabs -->
+        <div class="leaflet-sidebar-tabs">
+            <!-- top aligned tabs -->
+            <ul role="tablist">
+                <li><a href="#home" role="tab"><i class="fa fa-bars active"></i></a></li>
+            </ul>
+
+            <!-- bottom aligned tabs -->
+
+        </div>
+
+        <!-- panel content -->
+        <div class="leaflet-sidebar-content">
+            <div class="leaflet-sidebar-pane" id="home">
+                <h1 class="leaflet-sidebar-header">
+                    Harta despăduririlor 
+                    <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+
+                <h3>Legendă:</h3>
+                <p>
+                    <div><b>Defrișări anuale (2000-2019):</b></div>
+                    <div><span class="color-box" style="background-color:#00ffff"></span>2019</div>
+                    <div><span class="color-box" style="background-color:#ff1300"></span>2018</div>
+                    <div><span class="color-box" style="background-color:#ff8000"></span>2001-2017</div>
+                    <div><span class="color-box" style="background-color:#ffff00"></span>2000</div>
+                </p>
+                <p>
+                    <div><b>Defrișări cumulate 2000-2019:</b></div>
+                    <div><span class="color-box" style="background-color:#ff0000"></span>2000-2019</div>
+                </p>
+                <p>
+                    <div><b>Acoperire cu păduri în 2000:</b></div>
+                    <div><span class="color-box" style="background-color:#00ff00"></span>75-100%</div>
+                    <div><span class="color-box" style="background-color:#00aa00"></span>50-75%</div>
+                    <div><span class="color-box" style="background-color:#005500"></span>25-50%</div>
+                </p>
+                <p>
+                    <div><b>Defrișări/Împăduriri 2000-2019:</b></div>
+                    <div><span class="color-box" style="background-color:#ff0000"></span>Zone cu defrișări 2000-2019</div>
+                    <div><span class="color-box" style="background-color:#0000ff"></span>Zone cu împăduriri 2000-2019</div>
+                    <div><span class="color-box" style="background-color:#ff00ff"></span>Zone cu defrișări și împăduriri 2000-2019</div>
+                    <div><span class="color-box" style="background-color:#00e000"></span>Zone împădurite neafectate</div>
+                </p>
+
+                <h3>Sursa: <a href="https://earthenginepartners.appspot.com/science-2013-global-forest"><b>Global Forest Change</b></a></h3>
+                <p>
+                    <div></a></div>
+                    <div>Straturile colorate reprezintă vizualizarea geospațială a rezultatelor unei analize temporale a imaginilor satelitare Landsat, având ca obiectiv caracterizarea gradului de acoperire cu păduri a teritoriului și modificările acestuia apărute în intervalul 2000-2019. Definiția pădurii utilizată în studiu este zona acoperită cu vegetație mai înaltă de 5 metri.</div>
+                </p>
+                <p>Pentru detalii privind utilizarea hărții apăsați butonul din dreapta, cu semnul întrebării.</p>
+                <p>Pentru închiderea acestui mesaj apăsați triunghiul din fața titlului.</p>
+
+            </div>
+
+        </div>
+    </div>
+    
+    <script src="src/leaflet-sidebar.min.js"></script>
+
 
 <script>
     var mapExtent = [19.32120412060868, 42.67723088757718, 30.650064477337224, 49.20946062792045];
@@ -312,6 +403,21 @@
     {position: 'bottomleft',},
     ).addTo(map);
 
+    // create the sidebar instance and add it to the map
+    var sidebar = L.control.sidebar({ 
+        container: 'sidebar',
+        autopan: false,
+        closeButton: true,
+        position: 'right',
+        }).addTo(map).open('home');
+    // add panels dynamically to the sidebar
+    sidebar
+        .addPanel({
+            id:   'how-to',
+            tab:  '<i class="fa fa-question-circle"></i>',
+            title: 'Mod de utilizare',
+            pane: "<p>Navigați pe hartă mișcând mouse-ul ori folosind degetul pe ecranele tactile.</p><p>Faceți zoom pe hartă utilizând butoanele dedicate din stânga sus, sau folosind butonul de zoom al mouse-ului ori folosind degetele pe ecranele tactile.</p><p>Căutați o locație anume după denumire folosind butonul dedicat din stânga sus. Atenție, căutatea va avea ca obiect doar porțiunea de hartă vizibilă pe ecran la momentul căutării!</p><p>De la butonul din stânga jos alegeți stratul tematic care să fie afișat peste hartă.</p><p>La selectarea stratului 'UAT-uri' vor fi afișate granițele unităților administrativ-teritoriale, colorate după județul de care aparțin. În acest caz se poate face click pe hartă pentru afișarea unui balon-text cu identificarea UAT-ului în cauză.</p><p>De la butonul din dreapta sus alegeți harta de fundal care să fie afișată. Hărțile reprezintă colecții de imagini din satelit selectate și publicate de Google respectiv ESRI în anii indicați în dreptul acestora. Selecția imaginilor de către Google/ESRI nu respectă întotdeauna cronologia achiziției acestora, fiind posibil ca ediția dintr-un an se conțină în anumite zone imagini mai vechi decât cele din ediția anterioară. Atenție, hărțile 2014 și 2017 nu se pot afișa pe dispozitive iOS.</p><p>Pentru închiderea acestui mesaj apăsați triunghiul din fața titlului.</p>",
+        })
 
 </script>
 

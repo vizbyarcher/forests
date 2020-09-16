@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Romanian Forests</title>
+    <title>Paduri-Romania</title>
     <meta http-equiv="imagetoolbar" content="no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -27,6 +27,10 @@
     <script src="https://cdn.jsdelivr.net/leaflet.esri.renderers/2.0.2/esri-leaflet-renderers.js"></script>
     <script src="https://cdn.jsdelivr.net/leaflet.esri.webmap/0.4.0/esri-leaflet-webmap.js"></script>
 
+    <script src="src/leaflet-sidebar.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="src/leaflet-sidebar.css" />
+
     <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.3.3/dist/esri-leaflet-geocoder.css"
     integrity="sha512-IM3Hs+feyi40yZhDH6kV8vQMg4Fh20s9OzInIIAc4nx7aMYMfo+IenRUekoYsHZqGkREUgx0VvlEsgm7nCDW9g=="
     crossorigin="">
@@ -35,18 +39,21 @@
     crossorigin=""></script>
 
     <script src="src/inputGeojson.js"></script>
+    <script src="src/contourGeojson.js"></script>
     
-  
+    
 
     <!-- <script src="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.js"></script> -->
     <!-- <link rel="stylesheet" href="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.css"> -->
 
     <script src='https://unpkg.com/leaflet.gridlayer.fadeout@0.1.0/Leaflet.GridLayer.FadeOut.js'></script>
 
+    
     <script src="https://unpkg.com/pouchdb@^5.2.0/dist/pouchdb.js"></script>
     <script src="https://unpkg.com/leaflet.tilelayer.pouchdbcached@latest/L.TileLayer.PouchDBCached.js"></script>
     
     <script src="src/L.Control.MapCenterCoord.min.js"></script>
+
 
     <style>
     body { margin:0; padding:0; }
@@ -109,6 +116,13 @@
             font: 11px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
         }
 
+        .color-box {
+            float: left;
+            width: 14px;
+            height: 14px;
+            margin: 2px;
+        }
+
 
     </style>
     
@@ -126,6 +140,66 @@
     </select>
     </div>
 
+    <div id="sidebar" class="leaflet-sidebar collapsed">
+
+        <!-- nav tabs -->
+        <div class="leaflet-sidebar-tabs">
+            <!-- top aligned tabs -->
+            <ul role="tablist">
+                <li><a href="#home" role="tab"><i class="fa fa-bars active"></i></a></li>
+            </ul>
+
+            <!-- bottom aligned tabs -->
+
+        </div>
+
+        <!-- panel content -->
+        <div class="leaflet-sidebar-content">
+            <div class="leaflet-sidebar-pane" id="home">
+                <h1 class="leaflet-sidebar-header">
+                    Harta despăduririlor 
+                    <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+
+                <h3>Legendă:</h3>
+                <p>
+                    <div><b>Defrișări anuale (2000-2019):</b></div>
+                    <div><span class="color-box" style="background-color:#00ffff"></span>2019</div>
+                    <div><span class="color-box" style="background-color:#ff1300"></span>2018</div>
+                    <div><span class="color-box" style="background-color:#ff8000"></span>2001-2017</div>
+                    <div><span class="color-box" style="background-color:#ffff00"></span>2000</div>
+                </p>
+                <p>
+                    <div><b>Defrișări cumulate 2000-2019:</b></div>
+                    <div><span class="color-box" style="background-color:#ff0000"></span>2000-2019</div>
+                </p>
+                <p>
+                    <div><b>Acoperire cu păduri în 2000:</b></div>
+                    <div><span class="color-box" style="background-color:#00ff00"></span>75-100%</div>
+                    <div><span class="color-box" style="background-color:#00aa00"></span>50-75%</div>
+                    <div><span class="color-box" style="background-color:#005500"></span>25-50%</div>
+                </p>
+                <p>
+                    <div><b>Defrișări/Împăduriri 2000-2019:</b></div>
+                    <div><span class="color-box" style="background-color:#ff0000"></span>Zone cu defrișări 2000-2019</div>
+                    <div><span class="color-box" style="background-color:#0000ff"></span>Zone cu împăduriri 2000-2019</div>
+                    <div><span class="color-box" style="background-color:#ff00ff"></span>Zone cu defrișări și împăduriri 2000-2019</div>
+                    <div><span class="color-box" style="background-color:#00e000"></span>Zone împădurite neafectate</div>
+                </p>
+
+                <h3>Sursa: <a href="https://earthenginepartners.appspot.com/science-2013-global-forest"><b>Global Forest Change</b></a></h3>
+                <p>
+                    <div></a></div>
+                    <div>Straturile colorate reprezintă vizualizarea geospațială a rezultatelor unei analize temporale a imaginilor satelitare Landsat, având ca obiectiv caracterizarea gradului de acoperire cu păduri a teritoriului și modificările acestuia apărute în intervalul 2000-2019. Definiția pădurii utilizată în studiu este zona acoperită cu vegetație mai înaltă de 5 metri.</div>
+                </p>
+                <p>Pentru detalii privind utilizarea hărții apăsați butonul din dreapta, cu semnul întrebării.</p>
+                <p>Pentru închiderea acestui mesaj apăsați triunghiul din fața titlului.</p>
+
+            </div>
+
+        </div>
+    </div>
+
 <script>
     var mapExtent = [19.32120412060868, 42.67723088757718, 30.650064477337224, 49.20946062792045];
     var bounds = new L.LatLngBounds(
@@ -140,7 +214,7 @@
         // tileSize: 512,
         // zoomOffset: -1,
         // loadingControl: true,
-        fadeAnimation: true,
+        fadeAnimation: false,
         detectRetina: true,
         });
     
@@ -188,15 +262,7 @@
         maxZoom: 20,
         ext: 'png',
         pane: 'labels',
-    }).addTo(map);
-
-    var OSM_Labels = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}', {
-        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        subdomains: 'abcd',
-        minZoom: 8,
-        maxZoom: 20,
-        ext: 'png',
-        pane: 'labels',
+        opacity: 0.7,
     }).addTo(map);
 
     // https://esri.github.io/esri-leaflet/examples/webmap.html?id=d143b33f1a02421d86b6a4ca1d7b7cd0
@@ -381,7 +447,7 @@
         });
     }
     // https://leafletjs.com/examples/choropleth/
-    uat = L.geoJSON(inputGeojson, {
+    var uat = L.geoJSON(inputGeojson, {
         minZoom: 6,
         maxZoom: 18,
         style: style,
@@ -406,23 +472,39 @@
         return L.Util.template('<p><strong>{DENLOC_UTF8}</strong> <br />Județul: {JUD_STR}<br />SIRUTA: {SIRUTA_NUM}</p>', layer.feature.properties);
     });
 
-    var transparent = L.tileLayer();
+    // var transparent = L.tileLayer();
+
+    function styleContour(feature) {
+        return {
+            fillColor: 'black',
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+        }
+    };
+    var contour = L.geoJSON(contourGeojson, {
+        minZoom: 6,
+        maxZoom: 12,
+        style: styleContour,
+    }
+    ).addTo(map);
     
     // https://leafletjs.com/examples/layers-control/
     var overlays = {
         "UAT": uat,
         "DenumiriESRI": esriLabels,
         "DenumiriStamen": Stamen_TonerLabels,
+        "Contur Romania": contour,
 
     };
     // https://leafletjs.com/examples/layers-control/
     // https://gist.github.com/wboykinm/8108799
     L.control.layers({
-        'Defrișări pe ani': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_year_new/{z}/{x}/{y}.png', {opacity: 0.65, maxNativeZoom: 12, pane: 'overlay', maxZoom: 19,}).addTo(map),
-        'Defrișări cumulate 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss/{z}/{x}/{y}.png', {opacity: 0.65, maxNativeZoom: 12, pane: 'overlay', maxZoom: 19,}),
-        'Păduri în 2000': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.4/tree/{z}/{x}/{y}.png', {opacity: 0.45, maxNativeZoom: 12, pane: 'overlay', maxZoom: 19,}),
-        'Împăduriri/Defrișări 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_tree_gain/{z}/{x}/{y}.png', {opacity: 0.65, maxNativeZoom: 12, pane: 'overlay', maxZoom: 19,}),
-        'Imagine satelit': transparent,
+        'Defrișări anuale (2000-2019)': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_year_new/{z}/{x}/{y}.png', {opacity: 0.65, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}).addTo(map),
+        'Defrișări cumulate 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss/{z}/{x}/{y}.png', {opacity: 0.65, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
+        'Acoperire cu păduri în 2000': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.4/tree/{z}/{x}/{y}.png', {opacity: 0.45, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
+        'Defrișări/Împăduriri 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_tree_gain/{z}/{x}/{y}.png', {opacity: 0.65, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
+        // 'Imagine satelit 2020': transparent,
         }, 
         overlays, 
         {position: 'bottomleft',
@@ -437,6 +519,24 @@
         latlngDesignators: true,
         }
     ).addTo(map);
+
+    // create the sidebar instance and add it to the map
+    var sidebar = L.control.sidebar({ 
+        container: 'sidebar',
+        autopan: false,
+        closeButton: true,
+        position: 'right',
+        }).addTo(map).open('home');
+    // add panels dynamically to the sidebar
+    sidebar
+        .addPanel({
+            id:   'how-to',
+            tab:  '<i class="fa fa-question-circle"></i>',
+            title: 'Mod de utilizare',
+            pane: "<p>Navigați pe hartă mișcând mouse-ul ori folosind degetul pe ecranele tactile.</p><p>Faceți zoom pe hartă utilizând butoanele dedicate din stânga sus, sau folosind butonul de zoom al mouse-ului ori folosind degetele pe ecranele tactile.</p><p>Căutați o locație anume după denumire folosind butonul dedicat din stânga sus. Atenție, căutatea va avea ca obiect doar porțiunea de hartă vizibilă pe ecran la momentul căutării!</p><p>De la butonul din stânga jos alegeți stratul tematic care să fie afișat peste hartă.</p><p>La selectarea stratului 'UAT-uri' vor fi afișate granițele unităților administrativ-teritoriale, colorate după județul de care aparțin. În acest caz se poate face click pe hartă pentru afișarea unui balon-text cu identificarea UAT-ului în cauză.</p><p>De la butonul din dreapta sus alegeți harta de fundal care să fie afișată. Hărțile reprezintă colecții de imagini din satelit selectate și publicate de Google respectiv ESRI în anii indicați în dreptul acestora. Selecția imaginilor de către Google/ESRI nu respectă întotdeauna cronologia achiziției acestora, fiind posibil ca ediția dintr-un an se conțină în anumite zone imagini mai vechi decât cele din ediția anterioară. Atenție, hărțile 2014 și 2017 nu se pot afișa pe dispozitive iOS.</p><p>Pentru închiderea acestui mesaj apăsați triunghiul din fața titlului.</p>",
+        })
+    
+    
 
 </script>
 
