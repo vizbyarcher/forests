@@ -173,13 +173,31 @@
     // https://leafletjs.com/examples/map-panes/
     var esriLabels = L.esri.basemapLayer('ImageryLabels', {
         pane: 'labels',
-        minZoom: 12,
+        minZoom: 13,
         maxZoom: 17,
         useCache: true,
         cacheMaxAge: 1000 * 60 * 60 * 24 * 30,	// 30 days
 	    crossOrigin: true,
         detectRetina: true,
         }).addTo(map);
+    
+    var Stamen_TonerLabels = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}', {
+        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: 'abcd',
+        minZoom: 8,
+        maxZoom: 20,
+        ext: 'png',
+        pane: 'labels',
+    }).addTo(map);
+
+    var OSM_Labels = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}', {
+        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: 'abcd',
+        minZoom: 8,
+        maxZoom: 20,
+        ext: 'png',
+        pane: 'labels',
+    }).addTo(map);
 
     // https://esri.github.io/esri-leaflet/examples/webmap.html?id=d143b33f1a02421d86b6a4ca1d7b7cd0
     // http://zevross.com/blog/2014/04/25/adding-arcgis-map-services-to-your-map-using-leaflet/
@@ -393,7 +411,9 @@
     // https://leafletjs.com/examples/layers-control/
     var overlays = {
         "UAT": uat,
-        "Denumiri": esriLabels,
+        "DenumiriESRI": esriLabels,
+        "DenumiriStamen": Stamen_TonerLabels,
+
     };
     // https://leafletjs.com/examples/layers-control/
     // https://gist.github.com/wboykinm/8108799
