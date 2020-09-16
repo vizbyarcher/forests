@@ -41,8 +41,6 @@
     <!-- <script src="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.js"></script> -->
     <!-- <link rel="stylesheet" href="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.css"> -->
 
-    <!-- <script src="src/leaflet.tilelayer.fallback.js"></script> -->
-
     <script src='https://unpkg.com/leaflet.gridlayer.fadeout@0.1.0/Leaflet.GridLayer.FadeOut.js'></script>
 
     <script src="https://unpkg.com/pouchdb@^5.2.0/dist/pouchdb.js"></script>
@@ -136,7 +134,7 @@
 
     var map = L.map('map', {
         minZoom: 6,
-        maxZoom: 17,
+        maxZoom: 18,
         // zoomDelta: 0.5,
         // zoomSnap: 0.5,
         // tileSize: 512,
@@ -150,7 +148,8 @@
     // https://github.com/MazeMap/Leaflet.TileLayer.PouchDBCached
     var googleMap = L.gridLayer.googleMutant({
         minZoom: 6,
-        maxZoom: 17,
+        maxZoom: 19,
+        maxNativeZoom: 19,
         type:'satellite',
         useCache: true,
         cacheMaxAge: 1000 * 60 * 60 * 24 * 30,	// 30 days
@@ -186,15 +185,19 @@
     // http://zevross.com/blog/2014/04/25/adding-arcgis-map-services-to-your-map-using-leaflet/
     var webMap = L.esri.webMap('bf34c8bd6f114b72940f8a124a614645', {
         map: map, 
-        useCache: true, 
-        cacheMaxAge: 1000 * 60 * 60 * 24 * 30,	// 30 days
-        crossOrigin: true, 
-        detectRetina: true, 
+        // useCache: true, 
+        // cacheMaxAge: 1000 * 60 * 60 * 24 * 30,	// 30 days
+        // crossOrigin: true, 
+        // detectRetina: true, 
+        // maxNativeZoom: 17,
         });
     var overlayMaps = {};
     webMap.on('load', function () {
         webMap.layers.map(function (l) {
             overlayMaps[l.title] = l.layer;
+            l.layer.options.maxNativeZoom = 17;
+            l.layer.options.crossOrigin = true;
+            l.layer.options.detectRetina = true;
             // l.layer.addTo(map);
             // l.layer.bringToBack();
             });
@@ -362,7 +365,7 @@
     // https://leafletjs.com/examples/choropleth/
     uat = L.geoJSON(inputGeojson, {
         minZoom: 6,
-        maxZoom: 14,
+        maxZoom: 18,
         style: style,
         onEachFeature: onEachFeature,
     });
@@ -385,6 +388,7 @@
         return L.Util.template('<p><strong>{DENLOC_UTF8}</strong> <br />Județul: {JUD_STR}<br />SIRUTA: {SIRUTA_NUM}</p>', layer.feature.properties);
     });
 
+    var transparent = L.tileLayer();
     
     // https://leafletjs.com/examples/layers-control/
     var overlays = {
@@ -394,10 +398,11 @@
     // https://leafletjs.com/examples/layers-control/
     // https://gist.github.com/wboykinm/8108799
     L.control.layers({
-        'Defrișări pe ani': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_year_new/{z}/{x}/{y}.png', {opacity: 0.5, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}).addTo(map),
-        'Defrișări cumulate 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss/{z}/{x}/{y}.png', {opacity: 0.5, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
-        'Păduri în 2000': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.4/tree/{z}/{x}/{y}.png', {opacity: 0.3, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
-        'Împăduriri/Defrișări 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_tree_gain/{z}/{x}/{y}.png', {opacity: 0.5, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,})
+        'Defrișări pe ani': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_year_new/{z}/{x}/{y}.png', {opacity: 0.65, maxNativeZoom: 12, pane: 'overlay', maxZoom: 19,}).addTo(map),
+        'Defrișări cumulate 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss/{z}/{x}/{y}.png', {opacity: 0.65, maxNativeZoom: 12, pane: 'overlay', maxZoom: 19,}),
+        'Păduri în 2000': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.4/tree/{z}/{x}/{y}.png', {opacity: 0.45, maxNativeZoom: 12, pane: 'overlay', maxZoom: 19,}),
+        'Împăduriri/Defrișări 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_tree_gain/{z}/{x}/{y}.png', {opacity: 0.65, maxNativeZoom: 12, pane: 'overlay', maxZoom: 19,}),
+        'Imagine satelit': transparent,
         }, 
         overlays, 
         {position: 'bottomleft',
