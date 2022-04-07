@@ -14,14 +14,20 @@
    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
    crossorigin=""></script>
 
-    <script src="https://maps.googleapis.com/maps/api/js" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=" async defer></script>
     <script src="https://unpkg.com/es6-promise@4.0.5/dist/es6-promise.min.js"></script>
     <script>ES6Promise.polyfill();</script>
     <script src='https://unpkg.com/leaflet.gridlayer.googlemutant@latest/Leaflet.GoogleMutant.js'></script>
 
-    <script src="https://unpkg.com/esri-leaflet@2.5.0/dist/esri-leaflet.js"
-    integrity="sha512-ucw7Grpc+iEQZa711gcjgMBnmd9qju1CICsRaryvX7HJklK0pGl/prxKvtHwpgm5ZHdvAil7YPxI1oWPOWK3UQ=="
-    crossorigin=""></script>
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@3.0.7/dist/esri-leaflet.js"
+      integrity="sha512-ciMHuVIB6ijbjTyEdmy1lfLtBwt0tEHZGhKVXDzW7v7hXOe+Fo3UA1zfydjCLZ0/vLacHkwSARXB5DmtNaoL/g=="
+      crossorigin=""></script>
+
+    <!-- Load Esri Leaflet Vector from CDN -->
+    <script src="https://unpkg.com/esri-leaflet-vector@3.1.2/dist/esri-leaflet-vector.js"
+      integrity="sha512-SnA/TobYvMdLwGPv48bsO+9ROk7kqKu/tI9TelKQsDe+KZL0TUUWml56TZIMGcpHcVctpaU6Mz4bvboUQDuU3w=="
+      crossorigin=""></script>
 
     <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
     <script src="https://cdn.jsdelivr.net/leaflet.esri.renderers/2.0.2/esri-leaflet-renderers.js"></script>
@@ -40,18 +46,18 @@
 
     <script src="src/inputGeojson.js"></script>
     <script src="src/contourGeojson.js"></script>
-    
-    
+
+
 
     <!-- <script src="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.js"></script> -->
     <!-- <link rel="stylesheet" href="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.css"> -->
 
     <script src='https://unpkg.com/leaflet.gridlayer.fadeout@0.1.0/Leaflet.GridLayer.FadeOut.js'></script>
 
-    
+
     <script src="https://unpkg.com/pouchdb@^5.2.0/dist/pouchdb.js"></script>
     <script src="https://unpkg.com/leaflet.tilelayer.pouchdbcached@latest/L.TileLayer.PouchDBCached.js"></script>
-    
+
     <script src="src/L.Control.MapCenterCoord.min.js"></script>
 
 
@@ -125,9 +131,9 @@
 
 
     </style>
-    
+
     <div id="map"></div>
-    
+
     <div id="basemaps-wrapper" class="leaflet-bar">
     <label style="font-family: Arial, Helvetica, sans-serif; font-size: small;">Harta satelit:</label>
     <select id="basemaps">
@@ -157,7 +163,7 @@
         <div class="leaflet-sidebar-content">
             <div class="leaflet-sidebar-pane" id="home">
                 <h1 class="leaflet-sidebar-header">
-                    Harta despăduririlor 
+                    Harta despăduririlor
                     <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
                 </h1>
 
@@ -217,23 +223,27 @@
         fadeAnimation: false,
         detectRetina: true,
         });
-    
+
     // https://gitlab.com/IvanSanchez/Leaflet.GridLayer.GoogleMutant
     // https://github.com/MazeMap/Leaflet.TileLayer.PouchDBCached
-    var googleMap = L.gridLayer.googleMutant({
-        minZoom: 6,
-        maxZoom: 19,
-        maxNativeZoom: 19,
-        type:'satellite',
-        useCache: true,
-        cacheMaxAge: 1000 * 60 * 60 * 24 * 30,	// 30 days
-	    crossOrigin: true,
-        detectRetina: true,
-        });
+    // var googleMap = L.gridLayer.googleMutant({
+    //     minZoom: 6,
+    //     maxZoom: 19,
+    //     maxNativeZoom: 19,
+    //     type:'satellite',
+    //     useCache: true,
+    //     cacheMaxAge: 1000 * 60 * 60 * 24 * 30,	// 30 days
+	  //     crossOrigin: true,
+    //     detectRetina: true,
+    //     });
+    var googleMap = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+      maxZoom: 21,
+      subdomains:['mt0','mt1','mt2','mt3']
+    }).addTo(map);
     var currentLayer = googleMap.addTo(map);
     googleMap.bringToFront();
     var baseId = googleMap._leaflet_id;
-    
+
     // https://leafletjs.com/examples/map-panes/
     map.createPane('overlay');
     map.getPane('overlay').style.zIndex = 650;
@@ -242,7 +252,7 @@
     map.getPane('labels').style.zIndex = 651;
     map.getPane('labels').style.pointerEvents = 'none';
 
-    
+
     // https://esri.github.io/esri-leaflet/examples/basemap-with-labels.html
     // https://leafletjs.com/examples/map-panes/
     var esriLabels = L.esri.basemapLayer('ImageryLabels', {
@@ -251,10 +261,10 @@
         maxZoom: 17,
         useCache: true,
         cacheMaxAge: 1000 * 60 * 60 * 24 * 30,	// 30 days
-	    crossOrigin: true,
+	      crossOrigin: true,
         detectRetina: true,
         }).addTo(map);
-    
+
     var Stamen_TonerLabels = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}', {
         attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         subdomains: 'abcd',
@@ -268,11 +278,11 @@
     // https://esri.github.io/esri-leaflet/examples/webmap.html?id=d143b33f1a02421d86b6a4ca1d7b7cd0
     // http://zevross.com/blog/2014/04/25/adding-arcgis-map-services-to-your-map-using-leaflet/
     var webMap = L.esri.webMap('bf34c8bd6f114b72940f8a124a614645', {
-        map: map, 
-        // useCache: true, 
+        map: map,
+        // useCache: true,
         // cacheMaxAge: 1000 * 60 * 60 * 24 * 30,	// 30 days
-        // crossOrigin: true, 
-        // detectRetina: true, 
+        // crossOrigin: true,
+        // detectRetina: true,
         // maxNativeZoom: 17,
         });
     var overlayMaps = {};
@@ -286,8 +296,8 @@
             // l.layer.bringToBack();
             });
     });
-    
-    // map.on('zoomend',function(e){map.eachLayer(function(layer){console.log(layer);});});  
+
+    // map.on('zoomend',function(e){map.eachLayer(function(layer){console.log(layer);});});
 
     map.fitBounds(bounds);
     map.setMaxBounds(bounds);
@@ -301,7 +311,7 @@
     // https://esri.github.io/esri-leaflet/api-reference/controls/geosearch.html
     // https://developers.arcgis.com/rest/geocode/api-reference/geocoding-category-filtering.htm#ESRI_SECTION1_502B3FE2028145D7B189C25B1A00E17B
     // https://developers.arcgis.com/rest/geocode/api-reference/geocode-coverage.htm
-    var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider({maxResults: 10, countries: ['ROU', 'RO'],}); 
+    var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider({maxResults: 10, countries: ['ROU', 'RO'],});
     L.esri.Geocoding.geosearch({
         providers: [
             arcgisOnline,
@@ -309,7 +319,7 @@
                 label: 'Caută',
                 url: 'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',
                 layers: [1, 2, 3],
-                // searchFields: ['NAME'],  
+                // searchFields: ['NAME'],
             })
         ]
     }).addTo(map);
@@ -333,12 +343,12 @@
                 googleMap.setOpacity(0);
                 currentLayer = overlayMaps[basemap];
                 map.addLayer(currentLayer);
-                currentLayer.bringToFront();  
+                currentLayer.bringToFront();
             }
             // map.eachLayer(function(layer){console.log(layer._leaflet_id);});
             // console.log(map._layers);
             });
-    
+
     // ARCGIS.ONLINE PUBLIC FEATURE LAYER FROM GEOJSON FILE
     // https://doc.arcgis.com/en/arcgis-online/manage-data/publish-features.htm
     // https://esri.github.io/esri-leaflet/api-reference/layers/feature-layer.html
@@ -488,7 +498,7 @@
         style: styleContour,
     }
     ).addTo(map);
-    
+
     // https://leafletjs.com/examples/layers-control/
     var overlays = {
         "UAT": uat,
@@ -505,13 +515,13 @@
         'Acoperire cu păduri în 2000': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.4/tree/{z}/{x}/{y}.png', {opacity: 0.45, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
         'Defrișări/Împăduriri 2000-2019': L.tileLayer('https://storage.googleapis.com/earthenginepartners-hansen/tiles/gfc_v1.7/loss_tree_gain/{z}/{x}/{y}.png', {opacity: 0.65, maxNativeZoom: 12, pane: 'overlay', maxZoom: 16,}),
         // 'Imagine satelit 2020': transparent,
-        }, 
-        overlays, 
+        },
+        overlays,
         {position: 'bottomleft',
         collapsed: true,
         }
         ).addTo(map);
-    
+
     L.control.mapCenterCoord(
         {
         position: 'bottomright',
@@ -521,7 +531,7 @@
     ).addTo(map);
 
     // create the sidebar instance and add it to the map
-    var sidebar = L.control.sidebar({ 
+    var sidebar = L.control.sidebar({
         container: 'sidebar',
         autopan: false,
         closeButton: true,
@@ -535,8 +545,8 @@
             title: 'Mod de utilizare',
             pane: "<p>Navigați pe hartă mișcând mouse-ul ori folosind degetul pe ecranele tactile.</p><p>Faceți zoom pe hartă utilizând butoanele dedicate din stânga sus, sau folosind butonul de zoom al mouse-ului ori folosind degetele pe ecranele tactile.</p><p>Căutați o locație anume după denumire folosind butonul dedicat din stânga sus. Atenție, căutatea va avea ca obiect doar porțiunea de hartă vizibilă pe ecran la momentul căutării!</p><p>De la butonul din stânga jos alegeți stratul tematic care să fie afișat peste hartă.</p><p>La selectarea stratului 'UAT-uri' vor fi afișate granițele unităților administrativ-teritoriale, colorate după județul de care aparțin. În acest caz se poate face click pe hartă pentru afișarea unui balon-text cu identificarea UAT-ului în cauză.</p><p>De la butonul din dreapta sus alegeți harta de fundal care să fie afișată. Hărțile reprezintă colecții de imagini din satelit selectate și publicate de Google respectiv ESRI în anii indicați în dreptul acestora. Selecția imaginilor de către Google/ESRI nu respectă întotdeauna cronologia achiziției acestora, fiind posibil ca ediția dintr-un an se conțină în anumite zone imagini mai vechi decât cele din ediția anterioară. Atenție, hărțile 2014 și 2017 nu se pot afișa pe dispozitive iOS.</p><p>Pentru închiderea acestui mesaj apăsați triunghiul din fața titlului.</p>",
         })
-    
-    
+
+
 
 </script>
 
